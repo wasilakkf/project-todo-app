@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  api:
+    build:
+      dockerfile: ./apps/api/Dockerfile
+      context: .
+    command: yarn run serve:api
+    ports:
+      - '4000:3333'
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+
+  db:
+    image: mysql:8
+    restart: always
+    expose:
+      - '3306'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysqldata:/var/lib/mysql
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWROD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+volumes:
+  mysqldata:
+
+networks:
+  todo_app_network:
